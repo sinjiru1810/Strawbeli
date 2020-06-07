@@ -1,0 +1,176 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
+    <title>{{ pagename.web }} | {{ pagename.page }}</title>
+</head>
+<body class="pb-5">
+    
+    <nav class="navbar mb-md-2  navbar-expand-sm navbar-light bg-light" >
+        <div class="container mx-auto">
+            <table class="w-100">
+                <thead>
+                    <tr>
+                        <td class="text-center">
+                            <a class="navbar-brand" href="/"><img style="max-width: 200px;" src="{% static 'images/logo_red.png' %}" alt=""></a>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        
+                        <td>     
+                            <p class="my-2 mx-auto text-center" style="border-bottom: 1px solid rgb(131, 131, 131); line-height: 0.1em; margin: 10px 0 20px; "><span style="background: #f8f9fa; padding: 0 10px">{{pagename.page}}</span></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+      </nav>
+
+
+<!-- Modal -->
+<div class="modal fade" id="login" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title " id="exampleModalLabel">Halo, {% if user.is_authenticated %}{{user}}{% else %}Tamu{% endif %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body ">
+        {% if not user.is_authenticated %}
+            {% if login_status in 'no' %}
+            <h6 class="text-center font-weight-light text-danger text-wrap">Login gagal! Cek ulang username dan password</h6>
+            {% endif %}
+            <h5 class="text-center">Sudah punya akun?</h5>
+        
+        
+        <form method="post" class="w-75 mx-auto" action="">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="Username">Username</label>
+                <input id="Username" class="form-control" type="text" name="Username">
+            </div>
+            <div class="form-group">
+                <label for="Password">Password</label>
+                <input id="Password" class="form-control" type="password" name="Password">
+            </div>
+            
+        
+        <div class="text-center">
+            <br>
+            <button type="submit" class="btn btn-light w-50 rounded-pill mb-1">Login</button>
+            <br>
+            <a href="/market/daftar" type='button' class='btn btn-light w-50 rounded-pill'>atau, daftar di sini!</a>
+        </div>
+        </form>
+        {% else %}
+        
+        <div class="text-center">
+            
+            <a href="/market/{{user}}" type='button' class='btn btn-light w-50 rounded-pill'>Keranjang Anda</a>
+            
+            <hr>
+            <a href="/market/logout" type='button' class='btn btn-light w-50 rounded-pill'>Logout</a>
+        </div>
+        {% endif %}
+      </div>
+      <div class="modal-footer align-content-center">
+        <a class="mx-auto" href="/"><img style="max-width: 200px;" src="{% static 'images/logo_red.png' %}" alt=""></a>
+      </div>
+    </div>
+  </div>
+</div>
+   
+   <div class="container">
+    {% if aidi %}
+            {% for item in items %}
+                {% if item.id is aidi %}
+                    <div class="card flex-row flex-wrap " style="height:30rem;">
+                        <div class="card-header border-0 px-1 py-1 w-50">
+                            <img class="card-img" style="object-fit: cover; position :center center; height: 29rem;" src="{% if 'https' in item.gambar_barang%}{{item.gambar_barang}}{%else%}{%static item.gambar_barang%}{%endif%}" alt="Card image" >
+                        </div>
+                        <div class="card-block px-2 py-2 w-50">
+                            <h4 class="card-title">{{item.nama_barang}}</h4>
+                            <h6 class="card-text">Harga :</h6>
+                            <p class="card-text">IDR {{item.harga_barang}}</p>
+                            <h6 class="card-title">Kategori :</h6>
+                            <p class="card-text">{{item.kategori_barang}}</p>
+                            <h6 class="card-text">Toko : {{item.penjual}}</h6>
+                            <h6 class="card-title">Deskripsi :</h6>
+                            <p class="card-text">{% if item.deskripsi_barang %}{{item.deskripsi_barang}}{%else%} Tidak ada deskripsi {%endif%}</p>
+                            <button class="btn btn-outline-secondary" type="button"><h6 class="card-text"> + Tambah ke keranjang</h6></button>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% for item in items %}
+                {% if item is None %}
+                    <h1 class="text-center">Tidak ada barang dijual!</h1>
+                {% else %}
+                    {% if forloop.first %}<div class="row mb-3 justify-content-center">{% endif %}
+                        <div class="col-sm-3">
+                            <div class="card" style="width: 15rem; ">
+                                <div class="card-img-top" style="width: 15rem; height: 15rem;">
+                                    <img style="object-fit: cover; position :center center; height: 15rem;"  src="{% if 'https' in item.gambar_barang%}{{item.gambar_barang}}{%else%}{%static item.gambar_barang%}{%endif%}" class="card-img-top" alt="...">
+                                </div>
+                                <div class="card-body">
+                                  <h5 class="card-title">{{item.nama_barang}}</h5>
+                                  <p class="card-text"> IDR {{item.harga_barang}}</p>
+                                  <h6 class="card-title">Kategori :</h6>
+                                  <p class="card-text">{{item.kategori_barang}}</p>
+                                  <div class="text-center w-100">
+                                      <a href="{{item.id}}/" class="btn btn-outline-danger rounded-pill w-75">lihat item</a>
+                                  </div>
+                                </div>
+                              </div>
+                        </div>
+                        {% if forloop.counter|divisibleby:4 %}</div><div class="row mb-3 justify-content-around">{% endif %}
+                        {% if forloop.last %}</div>{% endif %}
+                    {% endif %}
+            {% endfor %}
+        {% endif %}
+   </div>
+
+    <nav class="navbar fixed-bottom  navbar-expand-sm navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <button type="button" class="btn btn-outline-danger rounded-pill" data-toggle="modal" data-target="#login">
+                {% if user.is_authenticated %}
+                    Halo, {{user}}
+                {% else %}
+                    Halo, Tamu! Login dulu yuk!
+                {% endif %}
+            </button>
+            
+            <ul class="navbar-nav mx-auto ">
+                
+            {%for link,name,desc in nav%}
+                {%if name not in 'Home'%}
+                    <li class="nav-item text-nowrap text-center  {%if name in pagename.page%} active font-weight-bold bg-danger rounded font-italic {%endif%}  " style="width: 150px;">
+                         <a class="nav-link {% if name in pagename.page %} text-white {% else %} text-danger {% endif %}"  href="{{link}}">{{name}}<span class="sr-only"></span></a>
+                    </li>
+                {%endif%}
+            {%endfor%}
+           
+            
+          </ul>
+        </div>
+      </nav>
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>
